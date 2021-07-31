@@ -38,7 +38,7 @@ mod ttf;
 
 pub use error::Error;
 pub use glyph::Glyph;
-pub use mesh::{Mesh, MeshPointer};
+pub use mesh::Mesh;
 pub use quality::Quality;
 pub use ttf::TTFFile;
 
