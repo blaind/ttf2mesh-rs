@@ -54,7 +54,7 @@ fn main() {
                     "- vertices: [{}]",
                     mesh.iter_vertices()
                         .map(|v| {
-                            let v = v.value();
+                            let v = v.val();
                             format!("({:.3}, {:.2})", v.0, v.1)
                         })
                         .collect::<Vec<_>>()
@@ -65,7 +65,7 @@ fn main() {
                     "- faces: [{}]",
                     mesh.iter_faces()
                         .map(|v| {
-                            let v = v.value();
+                            let v = v.val();
                             format!("({}, {}, {})", v.0, v.1, v.2)
                         })
                         .collect::<Vec<_>>()

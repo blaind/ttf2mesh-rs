@@ -1,3 +1,29 @@
+//! # Overview
+//!
+//! A high-level Rust wrapper API for [fetisov's ttf2mesh](https://github.com/fetisov/ttf2mesh/)
+//! library for generating a 2d/3d mesh (vertices, indices and normals [only for 3D])
+//! from TrueType (`.ttf`) glyphs.
+//!
+//! Usage:
+//! ```rust
+//! # use ttf2mesh::{TTFFile, Quality};
+//! #
+//! let mut ttf = TTFFile::from_file("./fonts/FiraMono-Medium.ttf").unwrap();
+//!
+//! // export all glyphs as 2d meshes to a .obj file
+//! ttf.export_to_obj("/dev/null", Quality::Low).unwrap();
+//!
+//! // generate 2d mesh for a glyph
+//! let mut glyph = ttf.glyph_from_char('€').unwrap();
+//! let mesh = glyph.to_2d_mesh(Quality::Medium).unwrap();
+//!
+//! // work with Mesh vertices, faces (indices). See Mesh documentation for more
+//! assert_eq!(mesh.vertices_len(), 56);
+//! assert_eq!(mesh.iter_vertices().next().unwrap().val(), (0.555, 0.656));
+//!
+//! assert_eq!(mesh.faces_len(), 54);
+//! assert_eq!(mesh.iter_faces().next().unwrap().val(), (53, 52, 5));
+//! ```
 #![feature(test)]
 extern crate test;
 
@@ -6,7 +32,7 @@ use std::{ffi::CString, os::unix::prelude::OsStrExt, path::Path};
 mod error;
 mod glyph;
 mod mesh;
-mod outputs;
+pub mod output;
 mod quality;
 mod ttf;
 

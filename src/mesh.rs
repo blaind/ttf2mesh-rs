@@ -4,9 +4,12 @@ use std::{convert::TryInto, marker::PhantomData};
 use ttf2mesh_sys as sys;
 
 use crate::{
-    outputs::{IteratorValue, MeshIterator},
+    output::{IteratorValue, MeshIterator},
     Error,
 };
+
+#[allow(unused_imports)]
+use crate::Glyph;
 
 /// A (2d or 3d) mesh that has been generated from a [`Glyph`]
 ///
@@ -19,21 +22,21 @@ use crate::{
 ///
 /// // vertices with for-loop
 /// for vertex in mesh_3d.iter_vertices() {
-///     let values: (f32, f32, f32) = vertex.value();
+///     let values: (f32, f32, f32) = vertex.val();
 ///     // do something
 /// }
 ///
 /// // or copying to a new vector
 /// let vertices = mesh_3d.iter_vertices()
-///     .map(|v| v.value())
+///     .map(|v| v.val())
 ///     .collect::<Vec<(f32, f32, f32)>>();
 ///
 /// let faces = mesh_3d.iter_faces()
-///     .map(|v| v.value())
+///     .map(|v| v.val())
 ///     .collect::<Vec<(i32, i32, i32)>>();
 ///
 /// let normals = mesh_3d.iter_normals().unwrap()
-///     .map(|v| v.value())
+///     .map(|v| v.val())
 ///     .collect::<Vec<(f32, f32, f32)>>();
 /// ```
 pub struct Mesh<'a, T: MeshPointer<'a>> {
@@ -135,6 +138,8 @@ impl<'a, T: MeshPointer<'a>> Mesh<'a, T> {
     }
 
     /// Get an iterator of mesh vertices
+    ///
+    /// Produces `(x: f32, y: f32, z: f32)` tuples for 3d mesh and `(x: f32, y: f32)` tuples for 2d mesh
     pub fn iter_vertices(&'a self) -> MeshIterator<'a, <T as MeshPointer>::VertStruct> {
         let vertices =
             unsafe { slice::from_raw_parts((&*self.inner).get_vert_ptr(), self.vertices_len()) };
@@ -143,6 +148,8 @@ impl<'a, T: MeshPointer<'a>> Mesh<'a, T> {
     }
 
     /// Get an iterator of mesh faces (indices)
+    ///
+    /// Produces `(v1: i32, v2: i32, v3: i32)` tuples
     pub fn iter_faces<'b>(&'a self) -> MeshIterator<'a, <T as MeshPointer>::FaceStruct> {
         let faces =
             unsafe { slice::from_raw_parts((&*self.inner).get_face_ptr(), self.faces_len()) };
@@ -151,6 +158,8 @@ impl<'a, T: MeshPointer<'a>> Mesh<'a, T> {
     }
 
     /// Get an iterator of mesh normals. Only for 3d mesh, always None for 2d mesh
+    ///
+    /// Produces `(x: f32, y: f32, z: f32)` tuples for 3d mesh
     pub fn iter_normals<'b>(
         &'a self,
     ) -> Option<MeshIterator<'a, <T as MeshPointer>::NormalStruct>> {

@@ -6,20 +6,20 @@ use ttf2mesh_sys as sys;
 
 use crate::{path_to_cstring, Error, Glyph, Quality};
 
-/// A decoded TTF file instance
+/// A decoded TTF file instance. Contains a list of [`Glyph`]'s
 ///
 /// Usage:
 /// ```rust
 /// # use ttf2mesh::{TTFFile, Quality};
-///
-/// // from a file
+/// #
+/// // initialize from a file
 /// let ttf = TTFFile::from_file("./fonts/FiraMono-Medium.ttf").unwrap();
 ///
-/// // from a buffer
+/// // initialize from a buffer
 /// let my_vec = std::fs::read("./fonts/FiraMono-Medium.ttf").unwrap();
 /// let mut ttf = TTFFile::from_buffer_vec(my_vec).unwrap();
 ///
-/// // how many fonts?
+/// // get the decoded glyph count
 /// assert_eq!(ttf.glyph_count(), 1485);
 ///
 /// // export all glyphs as 2d meshes to a .obj file
@@ -28,11 +28,13 @@ use crate::{path_to_cstring, Error, Glyph, Quality};
 /// // generate 2d mesh for a glyph
 /// let mut glyph = ttf.glyph_from_char('€').unwrap();
 /// let mesh = glyph.to_2d_mesh(Quality::Medium).unwrap();
+///
+/// // work with Mesh vertices, faces (indices). See Mesh documentation for more
 /// assert_eq!(mesh.vertices_len(), 56);
-/// assert_eq!(mesh.iter_vertices().next().unwrap().value(), (0.555, 0.656));
+/// assert_eq!(mesh.iter_vertices().next().unwrap().val(), (0.555, 0.656));
 ///
 /// assert_eq!(mesh.faces_len(), 54);
-/// assert_eq!(mesh.iter_faces().next().unwrap().value(), (53, 52, 5));
+/// assert_eq!(mesh.iter_faces().next().unwrap().val(), (53, 52, 5));
 /// ```
 pub struct TTFFile {
     ttf: *mut sys::ttf_file,
@@ -118,7 +120,7 @@ impl TTFFile {
         unsafe { *self.ttf }.nglyphs.try_into().unwrap()
     }
 
-    /// Get a glyph by its index. See also [`glyph_from_char`]
+    /// Get a glyph by its index. See also [`TTFFile::glyph_from_char`]
     pub fn glyph_by_index<'a>(&'a mut self, index: usize) -> Result<Glyph<'a>, Error> {
         let glyphs = unsafe { slice::from_raw_parts_mut((*self.ttf).glyphs, self.glyph_count()) };
 
