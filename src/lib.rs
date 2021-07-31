@@ -6,7 +6,7 @@
 //!
 //! Usage:
 //! ```rust
-//! # use ttf2mesh::{TTFFile, Quality};
+//! # use ttf2mesh::{TTFFile, Quality, Value};
 //! #
 //! let mut ttf = TTFFile::from_file("./fonts/FiraMono-Medium.ttf").unwrap();
 //!
@@ -32,13 +32,14 @@ use std::{ffi::CString, os::unix::prelude::OsStrExt, path::Path};
 mod error;
 mod glyph;
 mod mesh;
-pub mod output;
+mod output;
 mod quality;
 mod ttf;
 
 pub use error::Error;
 pub use glyph::Glyph;
 pub use mesh::Mesh;
+pub use output::{DataIterator, Value};
 pub use quality::Quality;
 pub use ttf::TTFFile;
 

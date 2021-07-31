@@ -1,4 +1,5 @@
 use std::env;
+use ttf2mesh::Value;
 
 /// Output 2d mesh data from a glyph in an input .ttf file
 fn main() {

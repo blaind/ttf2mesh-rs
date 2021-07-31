@@ -4,7 +4,7 @@ use std::{convert::TryInto, marker::PhantomData};
 use ttf2mesh_sys as sys;
 
 use crate::{
-    output::{DataIterator, IteratorValue},
+    output::{DataIterator, Value},
     Error,
 };
 
@@ -24,19 +24,12 @@ use crate::Glyph;
 ///
 /// Usage:
 /// ```rust
-/// # use ttf2mesh::{TTFFile, Quality};
+/// # use ttf2mesh::{TTFFile, Quality, Value};
 /// # let mut ttf = TTFFile::from_file("./fonts/FiraMono-Medium.ttf").unwrap();
 /// # let mut glyph = ttf.glyph_from_char('€').unwrap();
 /// # let mesh_3d = glyph.to_3d_mesh(Quality::Medium, 2.).unwrap();
-///
-/// // vertices with for-loop
-/// for vertex in mesh_3d.iter_vertices() {
-///     let values: (f32, f32, f32) = vertex.val();
-///     // do something
-/// }
-///
-/// // or copying to a new vector
-/// let vertices = mesh_3d.iter_vertices()
+/// #
+/// let vertices_3d = mesh_3d.iter_vertices()
 ///     .map(|v| v.val())
 ///     .collect::<Vec<(f32, f32, f32)>>();
 ///
@@ -55,16 +48,16 @@ pub struct Mesh<'a, T: InnerMesh<'a>> {
 
 /// Representation of `ttf2mesh` internal mesh structure
 ///
-/// Do not use methods directly, but rather use [`IteratorValue`] methods
+/// Do not use methods directly, but rather use [`Value`] methods
 pub trait InnerMesh<'a> {
     /// Value type for a vertices iterator
-    type VertStruct: IteratorValue<'a>;
+    type VertStruct: Value<'a>;
 
     /// Value type for a faces iterator
-    type FaceStruct: IteratorValue<'a>;
+    type FaceStruct: Value<'a>;
 
     /// Value type for a normals iterator
-    type NormalStruct: IteratorValue<'a>;
+    type NormalStruct: Value<'a>;
 
     fn vertices_len(&self) -> usize;
     fn faces_len(&self) -> usize;

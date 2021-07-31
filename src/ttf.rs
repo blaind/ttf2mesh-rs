@@ -10,7 +10,7 @@ use crate::{path_to_cstring, Error, Glyph, Quality};
 ///
 /// Usage:
 /// ```rust
-/// # use ttf2mesh::{TTFFile, Quality};
+/// # use ttf2mesh::{TTFFile, Quality, Value};
 /// #
 /// // initialize from a file
 /// let ttf = TTFFile::from_file("./fonts/FiraMono-Medium.ttf").unwrap();
