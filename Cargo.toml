@@ -1,0 +1,14 @@
+[package]
+name = "ttf2mesh"
+version = "0.0.1"
+edition = "2018"
+description = "Rust API for ttf2mesh"
+repository = "https://github.com/blaind/ttf2mesh-rs"
+license = "MIT"
+readme = "README.md"
+
+[dependencies]
+ttf2mesh-sys = { path = "ttf2mesh-sys", version = "0.0.1" }
+
+[workspace]
+members = ["ttf2mesh-sys"]
