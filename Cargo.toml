@@ -6,7 +6,7 @@ description = "Rust API for ttf2mesh"
 repository = "https://github.com/blaind/ttf2mesh-rs"
 license = "MIT"
 readme = "README.md"
-keywords = ["tessellation", "mesh", "3d", "2d", "truetype", "ttf", "glyphs"]
+keywords = ["tessellation", "mesh", "3d", "truetype", "ttf"]
 categories = ["multimedia", "api-bindings"]
 
 [dependencies]
