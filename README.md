@@ -24,7 +24,8 @@ Add to `Cargo.toml`:
     ttf2mesh-rs = "0.0.1"
 
 ## Examples
-TODO
+
+See [examples](/examples) -folder and crate docs.
 
 ## Development
 
