@@ -26,7 +26,7 @@ fn main() {
         println!(
             "- {} = {}",
             char,
-            match font.glyph_by_char(char) {
+            match font.glyph_from_char(char) {
                 Ok(mut glyph) => {
                     let len2dvert = match glyph.to_2d_mesh(ttf2mesh::Quality::Medium) {
                         Ok(mesh) => mesh.vertices_len(),

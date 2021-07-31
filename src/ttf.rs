@@ -6,31 +6,42 @@ use ttf2mesh_sys as sys;
 
 use crate::{path_to_cstring, Error, Glyph, Quality};
 
+/// A decoded TTF file instance
+///
+/// Usage - opening a file:
+/// ```rust
+/// # use ttf2mesh::{TTFFile, Quality};
+///
+/// // from a file
+/// let ttf = TTFFile::from_file("./fonts/FiraMono-Medium.ttf").unwrap();
+///
+/// // from a buffer
+/// let my_vec = std::fs::read("./fonts/FiraMono-Medium.ttf").unwrap();
+/// let mut ttf = TTFFile::from_buffer_vec(my_vec).unwrap();
+///
+/// // how many fonts?
+/// assert_eq!(ttf.glyph_count(), 1485);
+///
+/// // export all glyphs as 2d meshes to a .obj file
+/// ttf.export_to_obj("/dev/null", Quality::Low).unwrap();
+///
+/// // generate 2d mesh for a glyph
+/// let mut glyph = ttf.glyph_from_char('€').unwrap();
+/// let mesh = glyph.to_2d_mesh(Quality::Medium).unwrap();
+/// assert_eq!(mesh.vertices_len(), 56);
+/// assert_eq!(mesh.iter_vertices().next().unwrap().value(), (0.555, 0.656));
+///
+/// assert_eq!(mesh.faces_len(), 54);
+/// assert_eq!(mesh.iter_faces().next().unwrap().value(), (53, 52, 5));
+/// ```
 pub struct TTFFile {
     ttf: *mut sys::ttf_file,
 }
 
 impl TTFFile {
-    //pub fn from_system_font() -> Result<TTFFile, Error> {
-    /*
-    // list all system fonts by filename mask:
-
-    ttf_t **list = ttf_list_system_fonts("DejaVuSans*|Ubuntu*|FreeSerif*|Arial*|Cour*");
-    if (list == NULL) return false; // no memory in system
-    if (list[0] == NULL) return false; // no fonts were found
-
-    // load the first font from the list
-
-    ttf_load_from_file(list[0]->filename, &font, false);
-    ttf_free_list(list);
-    if (font == NULL) return false;
-
-    printf("font \"%s\" loaded\n", font->names.full_name);
-    return true;
-        */
-    //}
-
-    // data needs to be mutable (modified by ttf_*), hence vec
+    /// Load TTF font from a memory buffer
+    ///
+    /// Has to take ownership since the buffer is being modified at runtime
     pub fn from_buffer_vec(data: Vec<u8>) -> Result<TTFFile, Error> {
         let mut ttf = MaybeUninit::uninit();
         let error = unsafe {
@@ -44,6 +55,7 @@ impl TTFFile {
         Self::load(ttf, error)
     }
 
+    /// Load TTF font from a file
     pub fn from_file<P: AsRef<Path>>(path: P) -> Result<TTFFile, Error> {
         if !Path::new(path.as_ref().as_os_str()).exists() {
             return Err(Error::FileNotFound);
@@ -68,6 +80,7 @@ impl TTFFile {
         })
     }
 
+    /// Export all glyphs to a .obj -file
     pub fn export_to_obj<P: AsRef<Path>>(
         &mut self,
         obj_path: P,
@@ -86,7 +99,8 @@ impl TTFFile {
         Ok(())
     }
 
-    pub fn glyph_by_char<'a>(&'a mut self, char: char) -> Result<Glyph<'a>, Error> {
+    /// Get a glyph for a character
+    pub fn glyph_from_char<'a>(&'a mut self, char: char) -> Result<Glyph<'a>, Error> {
         let mut bytes = [0; 2];
         char.encode_utf16(&mut bytes);
 
@@ -99,10 +113,12 @@ impl TTFFile {
         self.glyph_by_index(index.try_into().unwrap())
     }
 
+    /// Total count of glyphs in a ttf file
     pub fn glyph_count(&self) -> usize {
         unsafe { *self.ttf }.nglyphs.try_into().unwrap()
     }
 
+    /// Get a glyph by its index. See also [`glyph_from_char`]
     pub fn glyph_by_index<'a>(&'a mut self, index: usize) -> Result<Glyph<'a>, Error> {
         let glyphs = unsafe { slice::from_raw_parts_mut((*self.ttf).glyphs, self.glyph_count()) };
 

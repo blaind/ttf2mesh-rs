@@ -55,16 +55,16 @@ mod tests {
     }
 
     #[test]
-    fn test_get_glyph_by_char() {
+    fn test_get_glyph_from_char() {
         let mut font = TTFFile::from_buffer_vec(read_font(None)).unwrap();
         let char = "A".chars().next().unwrap();
-        let _ = font.glyph_by_char(char).unwrap();
+        let _ = font.glyph_from_char(char).unwrap();
     }
 
     #[test]
     fn test_to_3d_mesh() {
         let mut font = TTFFile::from_buffer_vec(read_font(None)).unwrap();
-        let mut glyph = font.glyph_by_char("€".chars().next().unwrap()).unwrap();
+        let mut glyph = font.glyph_from_char("€".chars().next().unwrap()).unwrap();
         let mesh = glyph.to_3d_mesh(Quality::Low, 0.5).unwrap();
 
         let mut sizes = Vec::new();
@@ -96,7 +96,7 @@ mod tests {
     #[test]
     fn test_to_2d_mesh() {
         let mut font = TTFFile::from_buffer_vec(read_font(None)).unwrap();
-        let mut glyph = font.glyph_by_char("€".chars().next().unwrap()).unwrap();
+        let mut glyph = font.glyph_from_char("€".chars().next().unwrap()).unwrap();
 
         let mut sizes = Vec::new();
         let mesh = glyph.to_2d_mesh(Quality::Low).unwrap();
@@ -136,7 +136,7 @@ mod tests {
         let char = "€".chars().next().unwrap();
 
         b.iter(|| {
-            let _ = font.glyph_by_char(char).unwrap();
+            let _ = font.glyph_from_char(char).unwrap();
         });
     }
 
@@ -145,7 +145,7 @@ mod tests {
         let mut font = TTFFile::from_buffer_vec(read_font(None)).unwrap();
 
         let char = "€".chars().next().unwrap();
-        let mut glyph = font.glyph_by_char(char).unwrap();
+        let mut glyph = font.glyph_from_char(char).unwrap();
 
         b.iter(|| {
             let _ = glyph.to_3d_mesh(Quality::Low, 0.1).unwrap();
@@ -157,7 +157,7 @@ mod tests {
         let mut font = TTFFile::from_buffer_vec(read_font(None)).unwrap();
 
         let char = "€".chars().next().unwrap();
-        let mut glyph = font.glyph_by_char(char).unwrap();
+        let mut glyph = font.glyph_from_char(char).unwrap();
 
         b.iter(|| {
             let _ = glyph.to_3d_mesh(Quality::High, 0.1).unwrap();
@@ -169,7 +169,7 @@ mod tests {
         let mut font = TTFFile::from_buffer_vec(read_font(None)).unwrap();
 
         let char = "€".chars().next().unwrap();
-        let mut glyph = font.glyph_by_char(char).unwrap();
+        let mut glyph = font.glyph_from_char(char).unwrap();
 
         b.iter(|| {
             let _ = glyph.to_2d_mesh(Quality::Low).unwrap();
@@ -181,7 +181,7 @@ mod tests {
         let mut font = TTFFile::from_buffer_vec(read_font(None)).unwrap();
 
         let char = "€".chars().next().unwrap();
-        let mut glyph = font.glyph_by_char(char).unwrap();
+        let mut glyph = font.glyph_from_char(char).unwrap();
 
         b.iter(|| {
             let _ = glyph.to_2d_mesh(Quality::High).unwrap();

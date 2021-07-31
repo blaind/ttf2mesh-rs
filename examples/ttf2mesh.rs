@@ -40,7 +40,7 @@ fn main() {
 
     for char in utf8_string.chars() {
         println!("Mesh data char {:?}", char);
-        let mut glyph = match font.glyph_by_char(char) {
+        let mut glyph = match font.glyph_from_char(char) {
             Ok(g) => g,
             Err(_) => {
                 println!("- can not find glyph in the font file");

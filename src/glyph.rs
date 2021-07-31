@@ -4,6 +4,7 @@ use ttf2mesh_sys as sys;
 
 use crate::{mesh::Mesh, Error, Quality};
 
+/// Represents a glyph in truetype font file. Can be converted to a 2d or 3d mesh
 pub struct Glyph<'a> {
     inner: &'a mut sys::ttf_glyph,
 }
