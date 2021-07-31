@@ -8,6 +8,15 @@ use crate::{
     Error,
 };
 
+pub type Mesh3d = ttf2mesh_sys::ttf_mesh3d;
+pub type Mesh2d = ttf2mesh_sys::ttf_mesh;
+
+type Vert2d = sys::ttf_mesh__bindgen_ty_1;
+type Face2d = sys::ttf_mesh__bindgen_ty_2;
+type Vert3d = sys::ttf_mesh3d__bindgen_ty_1;
+type Face3d = sys::ttf_mesh3d__bindgen_ty_2;
+type Normal = sys::ttf_mesh3d__bindgen_ty_3;
+
 #[allow(unused_imports)]
 use crate::Glyph;
 
@@ -58,13 +67,13 @@ pub trait MeshPointer<'a> {
     fn get_normals_ptr(&self) -> Option<*mut Self::NormalStruct>;
     fn get_normals_len(&self) -> usize;
 
-    fn free(&mut self);
+    unsafe fn free(&mut self);
 }
 
-impl<'a> MeshPointer<'a> for sys::ttf_mesh {
-    type VertStruct = sys::ttf_mesh__bindgen_ty_1;
-    type FaceStruct = sys::ttf_mesh__bindgen_ty_2;
-    type NormalStruct = sys::ttf_mesh__bindgen_ty_2;
+impl<'a> MeshPointer<'a> for Mesh2d {
+    type VertStruct = Vert2d;
+    type FaceStruct = Face2d;
+    type NormalStruct = Normal;
 
     fn get_vert_ptr(&self) -> *mut Self::VertStruct {
         self.vert
@@ -90,15 +99,15 @@ impl<'a> MeshPointer<'a> for sys::ttf_mesh {
         0
     }
 
-    fn free(&mut self) {
-        unsafe { sys::ttf_free_mesh(&mut *self) }
+    unsafe fn free(&mut self) {
+        sys::ttf_free_mesh(&mut *self)
     }
 }
 
-impl<'a> MeshPointer<'a> for sys::ttf_mesh3d {
-    type VertStruct = sys::ttf_mesh3d__bindgen_ty_1;
-    type FaceStruct = sys::ttf_mesh3d__bindgen_ty_2;
-    type NormalStruct = sys::ttf_mesh3d__bindgen_ty_3;
+impl<'a> MeshPointer<'a> for Mesh3d {
+    type VertStruct = Vert3d;
+    type FaceStruct = Face3d;
+    type NormalStruct = Normal;
 
     fn get_vert_ptr(&self) -> *mut Self::VertStruct {
         self.vert
@@ -124,8 +133,8 @@ impl<'a> MeshPointer<'a> for sys::ttf_mesh3d {
         self.nvert.try_into().unwrap()
     }
 
-    fn free(&mut self) {
-        unsafe { sys::ttf_free_mesh3d(&mut *self) }
+    unsafe fn free(&mut self) {
+        sys::ttf_free_mesh3d(&mut *self)
     }
 }
 
@@ -191,6 +200,6 @@ impl<'a, T: MeshPointer<'a>> Mesh<'a, T> {
 
 impl<'a, T: MeshPointer<'a>> Drop for Mesh<'a, T> {
     fn drop(&mut self) {
-        unsafe { &mut *self.inner }.free();
+        unsafe { (&mut *self.inner).free() }
     }
 }

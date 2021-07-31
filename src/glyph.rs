@@ -2,7 +2,10 @@ use std::{convert::TryInto, mem::MaybeUninit};
 
 use ttf2mesh_sys as sys;
 
-use crate::{mesh::Mesh, Error, Quality};
+use crate::{
+    mesh::{Mesh, Mesh2d, Mesh3d},
+    Error, Quality,
+};
 
 /// Represents a glyph in truetype font file. Can be converted to a 2d or 3d [`Mesh`]
 ///
@@ -25,7 +28,7 @@ impl<'a> Glyph<'a> {
     }
 
     /// Generate a 2d mesh from the glyph with desired [`Quality`]
-    pub fn to_2d_mesh<'b>(&mut self, quality: Quality) -> Result<Mesh<'b, sys::ttf_mesh>, Error> {
+    pub fn to_2d_mesh<'b>(&mut self, quality: Quality) -> Result<Mesh<'b, Mesh2d>, Error> {
         let mut mesh = MaybeUninit::uninit();
 
         let features = sys::TTF_FEATURES_DFLT;
@@ -52,7 +55,7 @@ impl<'a> Glyph<'a> {
         &mut self,
         quality: Quality,
         depth: f32,
-    ) -> Result<Mesh<'b, sys::ttf_mesh3d>, Error> {
+    ) -> Result<Mesh<'b, Mesh3d>, Error> {
         let mut mesh = MaybeUninit::uninit();
 
         let features = sys::TTF_FEATURES_DFLT;
