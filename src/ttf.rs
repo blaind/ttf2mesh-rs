@@ -8,7 +8,7 @@ use crate::{path_to_cstring, Error, Glyph, Quality};
 
 /// A decoded TTF file instance
 ///
-/// Usage - opening a file:
+/// Usage:
 /// ```rust
 /// # use ttf2mesh::{TTFFile, Quality};
 ///

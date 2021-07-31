@@ -4,7 +4,17 @@ use ttf2mesh_sys as sys;
 
 use crate::{mesh::Mesh, Error, Quality};
 
-/// Represents a glyph in truetype font file. Can be converted to a 2d or 3d mesh
+/// Represents a glyph in truetype font file. Can be converted to a 2d or 3d [`Mesh`]
+///
+/// Usage:
+/// ```rust
+/// # use ttf2mesh::{TTFFile, Quality};
+/// # let mut ttf = TTFFile::from_file("./fonts/FiraMono-Medium.ttf").unwrap();
+/// # let mut glyph = ttf.glyph_from_char('€').unwrap();
+/// let mesh_2d = glyph.to_2d_mesh(Quality::Medium).unwrap();
+/// // or
+/// let mesh_3d = glyph.to_3d_mesh(Quality::Medium, 2.).unwrap();
+/// ```
 pub struct Glyph<'a> {
     inner: &'a mut sys::ttf_glyph,
 }

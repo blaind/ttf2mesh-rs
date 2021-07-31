@@ -8,6 +8,34 @@ use crate::{
     Error,
 };
 
+/// A (2d or 3d) mesh that has been generated from a [`Glyph`]
+///
+/// Usage:
+/// ```rust
+/// # use ttf2mesh::{TTFFile, Quality};
+/// # let mut ttf = TTFFile::from_file("./fonts/FiraMono-Medium.ttf").unwrap();
+/// # let mut glyph = ttf.glyph_from_char('€').unwrap();
+/// # let mesh_3d = glyph.to_3d_mesh(Quality::Medium, 2.).unwrap();
+///
+/// // vertices with for-loop
+/// for vertex in mesh_3d.iter_vertices() {
+///     let values: (f32, f32, f32) = vertex.value();
+///     // do something
+/// }
+///
+/// // or copying to a new vector
+/// let vertices = mesh_3d.iter_vertices()
+///     .map(|v| v.value())
+///     .collect::<Vec<(f32, f32, f32)>>();
+///
+/// let faces = mesh_3d.iter_faces()
+///     .map(|v| v.value())
+///     .collect::<Vec<(i32, i32, i32)>>();
+///
+/// let normals = mesh_3d.iter_normals().unwrap()
+///     .map(|v| v.value())
+///     .collect::<Vec<(f32, f32, f32)>>();
+/// ```
 pub struct Mesh<'a, T: MeshPointer<'a>> {
     inner: *mut T,
     _phantom: &'a PhantomData<T>,
@@ -106,6 +134,7 @@ impl<'a, T: MeshPointer<'a>> Mesh<'a, T> {
         })
     }
 
+    /// Get an iterator of mesh vertices
     pub fn iter_vertices(&'a self) -> MeshIterator<'a, <T as MeshPointer>::VertStruct> {
         let vertices =
             unsafe { slice::from_raw_parts((&*self.inner).get_vert_ptr(), self.vertices_len()) };
@@ -113,6 +142,7 @@ impl<'a, T: MeshPointer<'a>> Mesh<'a, T> {
         MeshIterator::new(vertices)
     }
 
+    /// Get an iterator of mesh faces (indices)
     pub fn iter_faces<'b>(&'a self) -> MeshIterator<'a, <T as MeshPointer>::FaceStruct> {
         let faces =
             unsafe { slice::from_raw_parts((&*self.inner).get_face_ptr(), self.faces_len()) };
@@ -120,6 +150,7 @@ impl<'a, T: MeshPointer<'a>> Mesh<'a, T> {
         MeshIterator::new(faces)
     }
 
+    /// Get an iterator of mesh normals. Only for 3d mesh, always None for 2d mesh
     pub fn iter_normals<'b>(
         &'a self,
     ) -> Option<MeshIterator<'a, <T as MeshPointer>::NormalStruct>> {
@@ -133,14 +164,17 @@ impl<'a, T: MeshPointer<'a>> Mesh<'a, T> {
         Some(MeshIterator::new(normals))
     }
 
+    /// Get the count of vertices
     pub fn vertices_len(&self) -> usize {
         unsafe { &*self.inner }.get_vert_len()
     }
 
+    /// Get the count of faces (indices)
     pub fn faces_len(&self) -> usize {
         unsafe { &*self.inner }.get_face_len()
     }
 
+    /// Get the count of normals (always zero for 2d meshes)
     pub fn normals_len(&self) -> usize {
         unsafe { &*self.inner }.get_normals_len()
     }
