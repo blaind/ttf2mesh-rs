@@ -1,111 +1,153 @@
 use core::slice;
-use std::convert::TryInto;
+use std::{convert::TryInto, marker::PhantomData};
 
 use ttf2mesh_sys as sys;
 
 use crate::{
-    outputs::{FacesIterator, Vertex3dIterator, VertexIterator},
+    outputs::{IteratorValue, MeshIterator},
     Error,
 };
 
-pub struct Mesh2d {
-    inner: *mut sys::ttf_mesh,
+pub struct Mesh<'a, T: MeshPointer<'a>> {
+    inner: *mut T,
+    _phantom: &'a PhantomData<T>,
 }
 
-// TODO: handle        ttf_outline_t *outline;       /* see ttf_linear_outline() */ ?
-impl Mesh2d {
-    pub(crate) fn from_raw(mesh: *mut sys::ttf_mesh) -> Result<Mesh2d, Error> {
-        Ok(Mesh2d { inner: mesh })
+pub trait MeshPointer<'a> {
+    type VertStruct: IteratorValue<'a>;
+    type FaceStruct: IteratorValue<'a>;
+    type NormalStruct: IteratorValue<'a>;
+
+    fn get_vert_ptr(&self) -> *mut Self::VertStruct;
+    fn get_vert_len(&self) -> usize;
+
+    fn get_face_ptr(&self) -> *mut Self::FaceStruct;
+    fn get_face_len(&self) -> usize;
+
+    fn get_normals_ptr(&self) -> Option<*mut Self::NormalStruct>;
+    fn get_normals_len(&self) -> usize;
+
+    fn free(&mut self);
+}
+
+impl<'a> MeshPointer<'a> for sys::ttf_mesh {
+    type VertStruct = sys::ttf_mesh__bindgen_ty_1;
+    type FaceStruct = sys::ttf_mesh__bindgen_ty_2;
+    type NormalStruct = sys::ttf_mesh__bindgen_ty_2;
+
+    fn get_vert_ptr(&self) -> *mut Self::VertStruct {
+        self.vert
     }
 
-    pub fn iter_vertices<'a>(&'a self) -> VertexIterator<'a> {
-        let vertices = unsafe {
-            slice::from_raw_parts((*self.inner).vert, (*self.inner).nvert.try_into().unwrap())
-        };
-
-        VertexIterator { index: 0, vertices }
+    fn get_vert_len(&self) -> usize {
+        self.nvert.try_into().unwrap()
     }
 
-    pub fn vertex_len(&self) -> usize {
-        unsafe { *self.inner }.nvert.try_into().unwrap()
+    fn get_face_ptr(&self) -> *mut Self::FaceStruct {
+        self.faces
     }
 
-    pub fn face_len(&self) -> usize {
-        unsafe { *self.inner }.nfaces.try_into().unwrap()
+    fn get_face_len(&self) -> usize {
+        self.nfaces.try_into().unwrap()
     }
 
-    pub fn iter_faces<'a>(&'a self) -> FacesIterator<'a, sys::ttf_mesh__bindgen_ty_2> {
-        let faces = unsafe {
-            slice::from_raw_parts(
-                (*self.inner).faces,
-                (*self.inner).nfaces.try_into().unwrap(),
-            )
-        };
+    fn get_normals_ptr(&self) -> Option<*mut Self::NormalStruct> {
+        None
+    }
 
-        FacesIterator { index: 0, faces }
+    fn get_normals_len(&self) -> usize {
+        0
+    }
+
+    fn free(&mut self) {
+        unsafe { sys::ttf_free_mesh(&mut *self) }
     }
 }
 
-impl Drop for Mesh2d {
+impl<'a> MeshPointer<'a> for sys::ttf_mesh3d {
+    type VertStruct = sys::ttf_mesh3d__bindgen_ty_1;
+    type FaceStruct = sys::ttf_mesh3d__bindgen_ty_2;
+    type NormalStruct = sys::ttf_mesh3d__bindgen_ty_3;
+
+    fn get_vert_ptr(&self) -> *mut Self::VertStruct {
+        self.vert
+    }
+
+    fn get_vert_len(&self) -> usize {
+        self.nvert.try_into().unwrap()
+    }
+
+    fn get_face_ptr(&self) -> *mut Self::FaceStruct {
+        self.faces
+    }
+
+    fn get_face_len(&self) -> usize {
+        self.nfaces.try_into().unwrap()
+    }
+
+    fn get_normals_ptr(&self) -> Option<*mut Self::NormalStruct> {
+        Some(self.normals)
+    }
+
+    fn get_normals_len(&self) -> usize {
+        self.nvert.try_into().unwrap()
+    }
+
+    fn free(&mut self) {
+        unsafe { sys::ttf_free_mesh3d(&mut *self) }
+    }
+}
+
+impl<'a, T: MeshPointer<'a>> Mesh<'a, T> {
+    pub(crate) fn from_raw(mesh: *mut T) -> Result<Self, Error> {
+        Ok(Mesh {
+            inner: mesh,
+            _phantom: &PhantomData,
+        })
+    }
+
+    pub fn iter_vertices(&'a self) -> MeshIterator<'a, <T as MeshPointer>::VertStruct> {
+        let vertices =
+            unsafe { slice::from_raw_parts((&*self.inner).get_vert_ptr(), self.vertices_len()) };
+
+        MeshIterator::new(vertices)
+    }
+
+    pub fn iter_faces<'b>(&'a self) -> MeshIterator<'a, <T as MeshPointer>::FaceStruct> {
+        let faces =
+            unsafe { slice::from_raw_parts((&*self.inner).get_face_ptr(), self.faces_len()) };
+
+        MeshIterator::new(faces)
+    }
+
+    pub fn iter_normals<'b>(
+        &'a self,
+    ) -> Option<MeshIterator<'a, <T as MeshPointer>::NormalStruct>> {
+        let ptr = match unsafe { &*self.inner }.get_normals_ptr() {
+            Some(ptr) => ptr,
+            None => return None,
+        };
+
+        let normals = unsafe { slice::from_raw_parts(ptr, self.normals_len()) };
+
+        Some(MeshIterator::new(normals))
+    }
+
+    pub fn vertices_len(&self) -> usize {
+        unsafe { &*self.inner }.get_vert_len()
+    }
+
+    pub fn faces_len(&self) -> usize {
+        unsafe { &*self.inner }.get_face_len()
+    }
+
+    pub fn normals_len(&self) -> usize {
+        unsafe { &*self.inner }.get_normals_len()
+    }
+}
+
+impl<'a, T: MeshPointer<'a>> Drop for Mesh<'a, T> {
     fn drop(&mut self) {
-        unsafe { sys::ttf_free_mesh(self.inner) }
-    }
-}
-
-pub struct Mesh3d {
-    inner: *mut sys::ttf_mesh3d,
-}
-
-// TODO: handle        ttf_outline_t *outline;       /* see ttf_linear_outline() */ ?
-impl Mesh3d {
-    pub(crate) fn from_raw(mesh: *mut sys::ttf_mesh3d) -> Result<Mesh3d, Error> {
-        Ok(Mesh3d { inner: mesh })
-    }
-
-    pub fn iter_vertices<'a>(&'a self) -> Vertex3dIterator<'a> {
-        let vertices = unsafe {
-            slice::from_raw_parts((*self.inner).vert, (*self.inner).nvert.try_into().unwrap())
-        };
-
-        Vertex3dIterator { index: 0, vertices }
-    }
-
-    pub fn vertex_len(&self) -> usize {
-        unsafe { *self.inner }.nvert.try_into().unwrap()
-    }
-
-    pub fn face_len(&self) -> usize {
-        unsafe { *self.inner }.nfaces.try_into().unwrap()
-    }
-
-    pub fn iter_faces<'a>(&'a self) -> FacesIterator<'a, sys::ttf_mesh3d__bindgen_ty_2> {
-        let faces = unsafe {
-            slice::from_raw_parts(
-                (*self.inner).faces,
-                (*self.inner).nfaces.try_into().unwrap(),
-            )
-        };
-
-        FacesIterator { index: 0, faces }
-    }
-
-    pub fn iter_normals<'a>(&'a self) -> FacesIterator<'a, sys::ttf_mesh3d__bindgen_ty_3> {
-        let normals = unsafe {
-            slice::from_raw_parts(
-                (*self.inner).normals,
-                (*self.inner).nvert.try_into().unwrap(), // FIXME check ok?
-            )
-        };
-
-        FacesIterator {
-            index: 0,
-            faces: normals,
-        }
-    }
-}
-
-impl Drop for Mesh3d {
-    fn drop(&mut self) {
-        unsafe { sys::ttf_free_mesh3d(self.inner) }
+        unsafe { &mut *self.inner }.free();
     }
 }

@@ -12,7 +12,7 @@ mod ttf;
 
 pub use error::Error;
 pub use glyph::Glyph;
-pub use mesh::{Mesh2d, Mesh3d};
+pub use mesh::Mesh;
 pub use quality::Quality;
 pub use ttf::TTFFile;
 
@@ -70,7 +70,7 @@ mod tests {
         let mut sizes = Vec::new();
         sizes.extend_from_slice(&[
             mesh.iter_vertices().collect::<Vec<_>>().len(),
-            mesh.iter_normals().collect::<Vec<_>>().len(),
+            mesh.iter_normals().unwrap().collect::<Vec<_>>().len(),
             mesh.iter_faces().collect::<Vec<_>>().len(),
         ]);
 
@@ -78,7 +78,7 @@ mod tests {
 
         sizes.extend_from_slice(&[
             mesh.iter_vertices().collect::<Vec<_>>().len(),
-            mesh.iter_normals().collect::<Vec<_>>().len(),
+            mesh.iter_normals().unwrap().collect::<Vec<_>>().len(),
             mesh.iter_faces().collect::<Vec<_>>().len(),
         ]);
 
@@ -86,7 +86,7 @@ mod tests {
 
         sizes.extend_from_slice(&[
             mesh.iter_vertices().collect::<Vec<_>>().len(),
-            mesh.iter_normals().collect::<Vec<_>>().len(),
+            mesh.iter_normals().unwrap().collect::<Vec<_>>().len(),
             mesh.iter_faces().collect::<Vec<_>>().len(),
         ]);
 
@@ -100,6 +100,7 @@ mod tests {
 
         let mut sizes = Vec::new();
         let mesh = glyph.to_2d_mesh(Quality::Low).unwrap();
+        assert!(mesh.iter_normals().is_none());
         sizes.extend_from_slice(&[
             mesh.iter_vertices().collect::<Vec<_>>().len(),
             mesh.iter_faces().collect::<Vec<_>>().len(),

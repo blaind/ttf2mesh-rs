@@ -2,7 +2,7 @@ use std::{convert::TryInto, mem::MaybeUninit};
 
 use ttf2mesh_sys as sys;
 
-use crate::{Error, Mesh2d, Mesh3d, Quality};
+use crate::{mesh::Mesh, Error, Quality};
 
 pub struct Glyph<'a> {
     inner: &'a mut sys::ttf_glyph,
@@ -13,7 +13,8 @@ impl<'a> Glyph<'a> {
         Self { inner: raw }
     }
 
-    pub fn to_2d_mesh(&mut self, quality: Quality) -> Result<Mesh2d, Error> {
+    /// Generate a 2d mesh from the glyph with desired [`Quality`]
+    pub fn to_2d_mesh<'b>(&mut self, quality: Quality) -> Result<Mesh<'b, sys::ttf_mesh>, Error> {
         let mut mesh = MaybeUninit::uninit();
 
         let features = sys::TTF_FEATURES_DFLT;
@@ -32,10 +33,15 @@ impl<'a> Glyph<'a> {
         }
 
         let mesh = unsafe { mesh.assume_init() };
-        Ok(Mesh2d::from_raw(mesh)?)
+        Ok(Mesh::from_raw(mesh)?)
     }
 
-    pub fn to_3d_mesh(&mut self, quality: Quality, depth: f32) -> Result<Mesh3d, Error> {
+    /// Generate a 3d mesh from the glyph with desired [`Quality`] and `depth`
+    pub fn to_3d_mesh<'b>(
+        &mut self,
+        quality: Quality,
+        depth: f32,
+    ) -> Result<Mesh<'b, sys::ttf_mesh3d>, Error> {
         let mut mesh = MaybeUninit::uninit();
 
         let features = sys::TTF_FEATURES_DFLT;
@@ -55,6 +61,6 @@ impl<'a> Glyph<'a> {
         }
 
         let mesh = unsafe { mesh.assume_init() };
-        Ok(Mesh3d::from_raw(mesh)?)
+        Ok(Mesh::from_raw(mesh)?)
     }
 }

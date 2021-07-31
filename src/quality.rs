@@ -1,7 +1,7 @@
 use crate::Error;
 
 /// Quality of the output mesh. Higher quality produces more vertices and takes longer
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Copy, Clone)]
 pub enum Quality {
     /// 10
     Low,
@@ -9,7 +9,7 @@ pub enum Quality {
     Medium,
     /// 50
     High,
-    /// customly set
+    /// Custom quality. Clipped between 8 and 128
     Custom(u8),
 }
 
