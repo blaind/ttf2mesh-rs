@@ -6,7 +6,7 @@
 //!
 //! Usage:
 //! ```rust
-//! # use ttf2mesh::{TTFFile, Quality, Value};
+//! # use ttf2mesh::{TTFFile, Quality, Value, Mesh, Mesh2d, Mesh3d};
 //! #
 //! let mut ttf = TTFFile::from_file("./fonts/FiraMono-Medium.ttf").unwrap();
 //!
@@ -15,14 +15,17 @@
 //!
 //! // generate 2d mesh for a glyph
 //! let mut glyph = ttf.glyph_from_char('€').unwrap();
-//! let mesh = glyph.to_2d_mesh(Quality::Medium).unwrap();
+//! let mesh_2d: Mesh<Mesh2d> = glyph.to_2d_mesh(Quality::Medium).unwrap();
 //!
 //! // work with Mesh vertices, faces (indices). See Mesh documentation for more
-//! assert_eq!(mesh.vertices_len(), 56);
-//! assert_eq!(mesh.iter_vertices().next().unwrap().val(), (0.555, 0.656));
+//! assert_eq!(mesh_2d.vertices_len(), 56);
+//! assert_eq!(mesh_2d.iter_vertices().next().unwrap().val(), (0.555, 0.656));
 //!
-//! assert_eq!(mesh.faces_len(), 54);
-//! assert_eq!(mesh.iter_faces().next().unwrap().val(), (53, 52, 5));
+//! assert_eq!(mesh_2d.faces_len(), 54);
+//! assert_eq!(mesh_2d.iter_faces().next().unwrap().val(), (53, 52, 5));
+//!
+//! // 3d mesh with depth of 0.5
+//! let mesh_3d: Mesh<Mesh3d> = glyph.to_3d_mesh(Quality::Medium, 0.5).unwrap();
 //! ```
 #![feature(test)]
 extern crate test;
@@ -38,7 +41,7 @@ mod ttf;
 
 pub use error::Error;
 pub use glyph::Glyph;
-pub use mesh::Mesh;
+pub use mesh::{Mesh, Mesh2d, Mesh3d};
 pub use output::{DataIterator, Value};
 pub use quality::Quality;
 pub use ttf::TTFFile;

@@ -1,3 +1,4 @@
+//! Mesh -related structures
 use core::slice;
 use std::{convert::TryInto, marker::PhantomData};
 
@@ -8,7 +9,10 @@ use crate::{
     Error,
 };
 
+/// Type for 3d mesh data
 pub type Mesh3d = ttf2mesh_sys::ttf_mesh3d;
+
+/// Type for 2d mesh data
 pub type Mesh2d = ttf2mesh_sys::ttf_mesh;
 
 type Vert2d = sys::ttf_mesh__bindgen_ty_1;
