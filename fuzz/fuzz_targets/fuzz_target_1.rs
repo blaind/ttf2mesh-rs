@@ -5,7 +5,7 @@ use rand::{thread_rng, Rng};
 use ttf2mesh::{Quality, TTFFile};
 
 fuzz_target!(|data: &[u8]| {
-    let mut font = match TTFFile::from_buffer_vec(data.to_vec(), false) {
+    let mut font = match TTFFile::from_buffer_vec(data.to_vec()) {
         Ok(font) => font,
         Err(_) => {
             //println!("Font load failed");
