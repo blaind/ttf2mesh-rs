@@ -14,3 +14,7 @@ ttf2mesh-sys = { path = "ttf2mesh-sys", version = "0.0.1" }
 
 [workspace]
 members = ["ttf2mesh-sys"]
+
+[features]
+default = []
+unstable = []

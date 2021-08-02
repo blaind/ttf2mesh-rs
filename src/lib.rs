@@ -27,8 +27,7 @@
 //! // 3d mesh with depth of 0.5
 //! let mesh_3d: Mesh<Mesh3d> = glyph.to_3d_mesh(Quality::Medium, 0.5).unwrap();
 //! ```
-#![feature(test)]
-extern crate test;
+#![cfg_attr(feature = "unstable", feature(test))]
 
 use std::{ffi::CString, os::unix::prelude::OsStrExt, path::Path};
 
@@ -57,7 +56,6 @@ mod tests {
     use std::path::PathBuf;
 
     use super::*;
-    use test::Bencher;
 
     fn get_font_path() -> PathBuf {
         PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("fonts")
@@ -70,7 +68,7 @@ mod tests {
         }
     }
 
-    fn read_font(font_file: Option<&str>) -> Vec<u8> {
+    pub(crate) fn read_font(font_file: Option<&str>) -> Vec<u8> {
         std::fs::read(get_font(font_file)).unwrap()
     }
 
@@ -149,10 +147,18 @@ mod tests {
 
         assert_eq!(sizes, &[41, 39, 92, 90, 194, 192]);
     }
+}
+
+#[cfg(all(feature = "unstable", test))]
+mod bench {
+    extern crate test;
+
+    use super::*;
+    use test::Bencher;
 
     #[bench]
     fn bench_open_font(b: &mut Bencher) {
-        let buffer = read_font(None);
+        let buffer = tests::read_font(None);
 
         b.iter(|| {
             let _ = TTFFile::from_buffer_vec(buffer.clone()).unwrap();
@@ -161,7 +167,7 @@ mod tests {
 
     #[bench]
     fn bench_get_glyph(b: &mut Bencher) {
-        let mut font = TTFFile::from_buffer_vec(read_font(None)).unwrap();
+        let mut font = TTFFile::from_buffer_vec(tests::read_font(None)).unwrap();
 
         b.iter(|| {
             let _ = font.glyph_from_char('€').unwrap();
@@ -170,7 +176,7 @@ mod tests {
 
     #[bench]
     fn bench_glyph_to_3d_mesh_low_quality(b: &mut Bencher) {
-        let mut font = TTFFile::from_buffer_vec(read_font(None)).unwrap();
+        let mut font = TTFFile::from_buffer_vec(tests::read_font(None)).unwrap();
         let mut glyph = font.glyph_from_char('€').unwrap();
 
         b.iter(|| {
@@ -180,7 +186,7 @@ mod tests {
 
     #[bench]
     fn bench_glyph_to_3d_mesh_high_quality(b: &mut Bencher) {
-        let mut font = TTFFile::from_buffer_vec(read_font(None)).unwrap();
+        let mut font = TTFFile::from_buffer_vec(tests::read_font(None)).unwrap();
         let mut glyph = font.glyph_from_char('€').unwrap();
 
         b.iter(|| {
@@ -190,7 +196,7 @@ mod tests {
 
     #[bench]
     fn bench_glyph_to_2d_mesh_low_quality(b: &mut Bencher) {
-        let mut font = TTFFile::from_buffer_vec(read_font(None)).unwrap();
+        let mut font = TTFFile::from_buffer_vec(tests::read_font(None)).unwrap();
         let mut glyph = font.glyph_from_char('€').unwrap();
 
         b.iter(|| {
@@ -200,7 +206,7 @@ mod tests {
 
     #[bench]
     fn bench_glyph_to_2d_mesh_high_quality(b: &mut Bencher) {
-        let mut font = TTFFile::from_buffer_vec(read_font(None)).unwrap();
+        let mut font = TTFFile::from_buffer_vec(tests::read_font(None)).unwrap();
         let mut glyph = font.glyph_from_char('€').unwrap();
 
         b.iter(|| {
