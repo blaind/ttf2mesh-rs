@@ -13,10 +13,10 @@ jobs:
     - name: Install dependencies
       run: sudo apt-get install gcc patch libudev-dev git
 
+    - uses: actions/checkout@v2
+
     - name: Init submodules
       run: git submodule update --init
-
-    - uses: actions/checkout@v2
 
     - name: Cache Cargo registry
       uses: actions/cache@v2
