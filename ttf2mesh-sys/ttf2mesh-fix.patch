@@ -1,5 +1,5 @@
 diff --git a/ttf2mesh.c b/ttf2mesh.c
-index abf85ec..26f1814 100644
+index abf85ec..bf77745 100644
 --- a/ttf2mesh.c
 +++ b/ttf2mesh.c
 @@ -56,6 +56,7 @@
@@ -53,7 +53,18 @@ index abf85ec..26f1814 100644
              glyph->outline->cont[n].subglyph_id = glyphIndex;
              glyph->outline->cont[n].subglyph_order = nglyphs;
              for (j = 0; j < glyph->outline->cont[n].length; j++)
-@@ -1151,11 +1165,15 @@ static int ttf_extract_tables(const uint8_t *data, int size, pps_t *s)
+@@ -1044,6 +1058,10 @@ int parse_glyf_table(ttf_t *ttf, pps_t *pp)
+     {
+         offset = pp->ploca16 ? pp->ploca16[i] * 2 : pp->ploca32[i];
+         if (offset == pp->sglyf) continue;
++
++        if (offset + (int)sizeof(ttf_glyfh_t) > pp->sglyf)
++            return TTF_ERR_FMT;
++
+         hdr = (ttf_glyfh_t *)(pp->pglyf + offset);
+         if ((int16_t)big16toh(hdr->numberOfContours) >= 0) continue;
+         result = parse_composite_glyph(ttf, ttf->glyphs + i, pp->pglyf + offset, pp->sglyf - offset);
+@@ -1151,11 +1169,15 @@ static int ttf_extract_tables(const uint8_t *data, int size, pps_t *s)
      rec = (ttf_tab_rec_t *)(s->hdr + 1);
  
      #define check_tag(str) (*(uint32_t *)rec->tableTag != *(uint32_t *)str)
@@ -73,7 +84,7 @@ index abf85ec..26f1814 100644
      }
  
      while (ntab--)
-@@ -1163,6 +1181,7 @@ static int ttf_extract_tables(const uint8_t *data, int size, pps_t *s)
+@@ -1163,6 +1185,7 @@ static int ttf_extract_tables(const uint8_t *data, int size, pps_t *s)
          conv32(rec->checkSum);
          conv32(rec->offset);
          conv32(rec->length);
@@ -81,7 +92,7 @@ index abf85ec..26f1814 100644
          if (rec->offset + rec->length > (unsigned)size) return TTF_ERR_FMT;
          if (check_tag("head"))
              if (ttf_checksum(data + rec->offset, rec->length) != rec->checkSum)
-@@ -1314,7 +1333,7 @@ static int locate_fmt4_table(pps_t *s)
+@@ -1314,7 +1337,7 @@ static int locate_fmt4_table(pps_t *s)
      for (i = 0; i < ntab; i++)
      {
          int offset = big32toh(s->pcmap->encRecs[i].offset);
