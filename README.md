@@ -27,9 +27,7 @@ See [examples](/examples) -folder and crate docs.
 
 ## Security
 
-The API surface (mainly `.ttf` loading) has been fuzzed with [cargo-fuzz](https://github.com/rust-fuzz/cargo-fuzz). Current findings have been reported upstream and being applied at build time.
-
-Still, be careful if planning to use this library for parsing untrusted fonts.
+The API surface (mainly `.ttf` loading) has been fuzzed with [cargo-fuzz](https://github.com/rust-fuzz/cargo-fuzz).
 
 ## Development
 

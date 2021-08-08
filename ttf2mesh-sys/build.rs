@@ -26,6 +26,7 @@ fn main() {
         .write_to_file(out_path.join("bindings.rs"))
         .expect("Couldn't write bindings!");
 
+    /*
     let patch_path = manifest_dir.join("ttf2mesh-fix.patch");
     let patch_file = std::fs::File::open(patch_path).unwrap();
 
@@ -45,6 +46,7 @@ fn main() {
         .status()
         .unwrap();
     //// /patching
+    */
 
     cc::Build::new()
         .flag("-Wall")

@@ -11,11 +11,3 @@ The library is built at the build time, if you don't have compiler installed:
 ```
 sudo apt-get install build-essential
 ```
-
-(although a smaller subset might also be sufficient)
-
-Currently, a security patch from `ttf2mesh-fix.patch` is applied to the original library (see https://github.com/fetisov/ttf2mesh/pull/2). A patch command line utility is needed for building:
-
-```
-sudo apt-get install patch
-```
