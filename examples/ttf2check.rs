@@ -24,8 +24,9 @@ fn main() {
     println!("Input string: {:?}", utf8_string);
     for char in utf8_string.chars() {
         println!(
-            "- {} = {}",
+            "- {} ({}) = {}",
             char,
+            char.escape_unicode(),
             match font.glyph_from_char(char) {
                 Ok(mut glyph) => {
                     let len2dvert = match glyph.to_2d_mesh(ttf2mesh::Quality::Medium) {

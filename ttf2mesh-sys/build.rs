@@ -8,6 +8,13 @@ fn main() {
     println!("cargo:rerun-if-changed=ttf2mesh/ttf2mesh.c");
     println!("cargo:rustc-link-lib=m");
 
+    let manifest_dir = PathBuf::from(env!("CARGO_MANIFEST_DIR"));
+
+    // check that submodule has been initialized
+    if !manifest_dir.join("ttf2mesh/ttf2mesh.h").is_file() {
+        panic!("ttf2mesh.h not found - have you initialized the submodule? (`git submodule update --init`)");
+    }
+
     let bindings = bindgen::Builder::default()
         .header("wrapper.h")
         .parse_callbacks(Box::new(bindgen::CargoCallbacks))
@@ -19,7 +26,6 @@ fn main() {
         .write_to_file(out_path.join("bindings.rs"))
         .expect("Couldn't write bindings!");
 
-    let manifest_dir = PathBuf::from(env!("CARGO_MANIFEST_DIR"));
     let patch_path = manifest_dir.join("ttf2mesh-fix.patch");
     let patch_file = std::fs::File::open(patch_path).unwrap();
 
