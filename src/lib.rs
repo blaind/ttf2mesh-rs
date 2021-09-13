@@ -49,7 +49,7 @@ pub use ttf::TTFFile;
 
 #[cfg(not(windows))]
 fn path_to_cstring<P: AsRef<Path>>(path: P) -> CString {
-    use os::unix::prelude::OsStrExt;
+    use std::os::unix::ffi::OsStrExt;
     CString::new(path.as_ref().as_os_str().as_bytes()).unwrap()
 }
 
