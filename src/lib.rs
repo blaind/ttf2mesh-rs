@@ -11,7 +11,7 @@
 //! let mut ttf = TTFFile::from_file("./fonts/FiraMono-Medium.ttf").unwrap();
 //!
 //! // export all glyphs as 2d meshes to a .obj file
-//! ttf.export_to_obj("/dev/null", Quality::Low).unwrap();
+//! ttf.export_to_obj("./fonts/FiraMono-Medium.obj", Quality::Low).unwrap();
 //!
 //! // generate 2d mesh for a glyph
 //! let mut glyph = ttf.glyph_from_char('€').unwrap();
@@ -29,7 +29,7 @@
 //! ```
 #![cfg_attr(feature = "unstable", feature(test))]
 
-use std::{ffi::CString, os::unix::prelude::OsStrExt, path::Path};
+use std::{ffi::CString, path::Path};
 
 mod error;
 mod glyph;
@@ -47,8 +47,24 @@ pub use ttf::TTFFile;
 
 // TODO: support TTF_FEATURE_IGN_ERR as bitflag
 
+#[cfg(not(windows))]
 fn path_to_cstring<P: AsRef<Path>>(path: P) -> CString {
+    use os::unix::prelude::OsStrExt;
     CString::new(path.as_ref().as_os_str().as_bytes()).unwrap()
+}
+
+#[cfg(windows)]
+fn path_to_cstring<P: AsRef<Path>>(path: P) -> CString {
+    // TODO: is this really ok?
+    CString::new(
+        path.as_ref()
+            .to_str()
+            .unwrap()
+            .to_string()
+            .as_bytes()
+            .to_vec(),
+    )
+    .unwrap()
 }
 
 #[cfg(test)]

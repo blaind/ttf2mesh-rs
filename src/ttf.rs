@@ -23,7 +23,7 @@ use crate::{path_to_cstring, Error, Glyph, Quality};
 /// assert_eq!(ttf.glyph_count(), 1485);
 ///
 /// // export all glyphs as 2d meshes to a .obj file
-/// ttf.export_to_obj("/dev/null", Quality::Low).unwrap();
+/// ttf.export_to_obj("./fonts/FiraMono-Medium.obj", Quality::Low).unwrap();
 ///
 /// // generate 2d mesh for a glyph
 /// let mut glyph = ttf.glyph_from_char('€').unwrap();
