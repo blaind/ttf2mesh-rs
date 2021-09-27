@@ -1,6 +1,6 @@
 [package]
 name = "ttf2mesh"
-version = "0.0.9"
+version = "0.0.10"
 edition = "2018"
 description = "Rust API for ttf2mesh"
 repository = "https://github.com/blaind/ttf2mesh-rs"
