@@ -6,6 +6,8 @@ use std::path::PathBuf;
 fn main() {
     println!("cargo:rerun-if-changed=wrapper.h");
     println!("cargo:rerun-if-changed=ttf2mesh/ttf2mesh.c");
+
+    #[cfg(unix)]
     println!("cargo:rustc-link-lib=m");
 
     let manifest_dir = PathBuf::from(env!("CARGO_MANIFEST_DIR"));
@@ -50,7 +52,6 @@ fn main() {
 
     cc::Build::new()
         .flag("-Wall")
-        .flag("-Wextra")
         .flag("-pedantic")
         .flag("-std=c99")
         .flag("-D_POSIX_C_SOURCE=199309L")
