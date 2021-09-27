@@ -55,16 +55,7 @@ fn path_to_cstring<P: AsRef<Path>>(path: P) -> CString {
 
 #[cfg(windows)]
 fn path_to_cstring<P: AsRef<Path>>(path: P) -> CString {
-    // TODO: is this really ok?
-    CString::new(
-        path.as_ref()
-            .to_str()
-            .unwrap()
-            .to_string()
-            .as_bytes()
-            .to_vec(),
-    )
-    .unwrap()
+    CString::new(path.as_ref().as_os_str().to_str().unwrap()).unwrap()
 }
 
 #[cfg(test)]
