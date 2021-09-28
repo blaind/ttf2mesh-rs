@@ -1,6 +1,6 @@
 [package]
 name = "ttf2mesh"
-version = "0.0.10"
+version = "0.0.11"
 edition = "2018"
 description = "Rust API for ttf2mesh"
 repository = "https://github.com/blaind/ttf2mesh-rs"
@@ -10,7 +10,7 @@ keywords = ["tessellation", "mesh", "3d", "truetype", "ttf"]
 categories = ["multimedia", "api-bindings"]
 
 [dependencies]
-ttf2mesh-sys = { path = "ttf2mesh-sys", version = "0.0.1" }
+ttf2mesh-sys = { path = "ttf2mesh-sys", version = "0.0.2" }
 
 [workspace]
 members = ["ttf2mesh-sys"]
