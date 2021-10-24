@@ -10,7 +10,7 @@ keywords = ["tessellation", "mesh", "3d", "truetype", "ttf"]
 categories = ["multimedia", "api-bindings"]
 
 [dependencies]
-ttf2mesh-sys = { path = "ttf2mesh-sys", version = "0.1.0" }
+ttf2mesh-sys = { path = "ttf2mesh-sys", version = "0.1.2" }
 
 [workspace]
 members = ["ttf2mesh-sys"]
