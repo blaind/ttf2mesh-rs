@@ -28,28 +28,6 @@ fn main() {
         .write_to_file(out_path.join("bindings.rs"))
         .expect("Couldn't write bindings!");
 
-    /*
-    let patch_path = manifest_dir.join("ttf2mesh-fix.patch");
-    let patch_file = std::fs::File::open(patch_path).unwrap();
-
-    //// patching, see https://github.com/fetisov/ttf2mesh/pull/2
-    if std::process::Command::new("patch")
-        .arg("-v")
-        .status()
-        .is_err()
-    {
-        panic!("Can not apply ttf2mesh patch. Please make sure that you have `patch` command installed.")
-    }
-
-    std::process::Command::new("patch")
-        .current_dir(manifest_dir.join("ttf2mesh"))
-        .args("-r - --forward -p1".split(" "))
-        .stdin(patch_file)
-        .status()
-        .unwrap();
-    //// /patching
-    */
-
     cc::Build::new()
         .flag("-Wall")
         .flag("-pedantic")
