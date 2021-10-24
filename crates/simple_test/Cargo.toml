@@ -1,0 +1,7 @@
+[package]
+name = "simple_test"
+version = "0.1.0"
+edition = "2018"
+
+[dependencies]
+ttf2mesh = { git = "https://github.com/blaind/ttf2mesh-rs.git" }

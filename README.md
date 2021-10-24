@@ -18,7 +18,7 @@ Prequisites:
 Add to `Cargo.toml`:
 
     [dependencies]
-    ttf2mesh-rs = "*" # change with latest version
+    ttf2mesh = "*" # change to latest version
 
 ## Examples
 
