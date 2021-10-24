@@ -1,4 +1,4 @@
-# ttf2mesh-rs &emsp; [![Build Status]][actions] [![Latest Version]][crates.io] [![Docs Version]][docs]
+# ttf2mesh &emsp; [![Build Status]][actions] [![Latest Version]][crates.io] [![Docs Version]][docs]
 
 [build status]: https://img.shields.io/github/workflow/status/blaind/ttf2mesh-rs/test
 [actions]: https://github.com/blaind/ttf2mesh/actions?query=branch%3Amain
