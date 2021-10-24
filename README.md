@@ -1,11 +1,10 @@
 # ttf2mesh-rs &emsp; [![Build Status]][actions] [![Latest Version]][crates.io] [![Docs Version]][docs]
 
-[Build Status]: https://img.shields.io/github/workflow/status/blaind/ttf2mesh-rs/test
+[build status]: https://img.shields.io/github/workflow/status/blaind/ttf2mesh-rs/test
 [actions]: https://github.com/blaind/ttf2mesh/actions?query=branch%3Amain
-[Latest Version]: https://img.shields.io/crates/v/ttf2mesh.svg
+[latest version]: https://img.shields.io/crates/v/ttf2mesh.svg
 [crates.io]: https://crates.io/crates/ttf2mesh
-
-[Docs Version]: https://docs.rs/ttf2mesh/badge.svg
+[docs version]: https://docs.rs/ttf2mesh/badge.svg
 [docs]: https://docs.rs/ttf2mesh
 
 A high-level Rust wrapper API for [fetisov's ttf2mesh](https://github.com/fetisov/ttf2mesh/) library for generating a 2d/3d mesh (vertices, indices and normals [only for 3D]) from TrueType (`.ttf`) glyphs.
@@ -24,6 +23,44 @@ Add to `Cargo.toml`:
 ## Examples
 
 See [examples](/examples) -folder and crate docs.
+
+Simple usage:
+
+```rust
+use ttf2mesh::{Quality, TTFFile, Value};
+
+let mut font = TTFFile::from_file("fonts/FiraMono-Medium.ttf").unwrap();
+
+for char in "Hello_World".chars() {
+    let mut glyph = font.glyph_from_char(char).unwrap();
+    let mesh = glyph.to_2d_mesh(Quality::Medium).unwrap();
+
+    println!("Mesh data char {:?}", char);
+    println!(
+        "- vertices: [{}]",
+        mesh.iter_vertices()
+            .map(|v| {
+                let v = v.val();
+                format!("({:.3}, {:.2})", v.0, v.1)
+            })
+            .collect::<Vec<_>>()
+            .join(", ")
+    );
+    println!(
+        "- faces: [{}]",
+        mesh.iter_faces()
+            .map(|v| {
+                let v = v.val();
+                format!("({}, {}, {})", v.0, v.1, v.2)
+            })
+            .collect::<Vec<_>>()
+            .join(", ")
+    );
+    println!("");
+}
+
+
+```
 
 ## Security
 
@@ -50,4 +87,4 @@ Licensed under <a href="LICENSE">MIT license</a>
 ### Contribution
 
 Unless you explicitly state otherwise, any contribution intentionally submitted
-for inclusion in the software by you,  shall be licensed as above, without any additional terms or conditions.
+for inclusion in the software by you, shall be licensed as above, without any additional terms or conditions.
