@@ -7,7 +7,6 @@ env:
 
 jobs:
   test:
-    runs-on: ubuntu-latest
     strategy:
       matrix:
         os: [windows-latest, ubuntu-latest, macos-latest]
@@ -15,23 +14,23 @@ jobs:
     runs-on: ${{ matrix.os }}
 
     steps:
-    - name: Install dependencies
-      run: sudo apt-get install gcc patch libudev-dev git
+      - name: Install dependencies
+        run: sudo apt-get install gcc patch libudev-dev git
 
-    - uses: actions/checkout@v2
+      - uses: actions/checkout@v2
       - uses: dtolnay/rust-toolchain@${{ matrix.rust }}
 
-    - name: Init submodules
-      run: git submodule update --init
+      - name: Init submodules
+        run: git submodule update --init
 
-    - name: Cache
-      uses: actions/cache@v3
-      with:
-        path: |
-          ~/.cargo/registry
-          ~/.cargo/git
-          target
-        key: ${{ runner.os }}-${{ matrix.rust }}-cargo-${{ hashFiles('**/Cargo.lock') }}
+      - name: Cache
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            target
+          key: ${{ runner.os }}-${{ matrix.rust }}-cargo-${{ hashFiles('**/Cargo.lock') }}
 
-    - name: Run tests
-      run: cargo test --verbose
+      - name: Run tests
+        run: cargo test --verbose
