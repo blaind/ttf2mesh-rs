@@ -9,13 +9,14 @@ jobs:
   test:
     strategy:
       matrix:
-        os: [windows-latest, ubuntu-latest, macos-latest]
+        os: [windows-latest, ubuntu-latest]
         rust: [stable, 1.43]
     runs-on: ${{ matrix.os }}
 
     steps:
       - name: Install dependencies
         run: sudo apt-get install gcc patch libudev-dev git
+        if: runner.os == 'linux'
 
       - uses: actions/checkout@v2
 
