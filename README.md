@@ -80,10 +80,6 @@ Update submodules
 
 Develop
 
-## Rust Version Support
-
-The minimum supported Rust version is 1.43
-
 ## License
 
 Licensed under <a href="LICENSE">MIT license</a>
