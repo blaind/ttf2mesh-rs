@@ -46,7 +46,7 @@ impl Quality {
             Quality::Low => 10,
             Quality::Medium => 20,
             Quality::High => 50,
-            Quality::Custom(value) => (*value),
+            Quality::Custom(value) => *value,
         }
     }
 }
