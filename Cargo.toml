@@ -1,6 +1,6 @@
 [package]
 name = "ttf2mesh"
-version = "0.2.0"
+version = "0.2.1"
 edition = "2018"
 description = "Rust API for ttf2mesh - a crossplatform library allows to convert a glyphs of truetype font (ttf) to a mesh objects in 2d and 3d space"
 repository = "https://github.com/blaind/ttf2mesh-rs"
