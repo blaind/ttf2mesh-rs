@@ -8,5 +8,5 @@ license = "MIT"
 readme = "README.md"
 
 [build-dependencies]
-bindgen = "0.68"
+bindgen = "0.69"
 cc = "1.0"
