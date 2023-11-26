@@ -68,8 +68,12 @@ impl TTFFile {
 
     /// Load TTF font from a file
     pub fn from_file<P: AsRef<Path>>(path: P) -> Result<TTFFile, Error> {
-        if !Path::new(path.as_ref().as_os_str()).exists() {
-            return Err(Error::FileNotFound);
+        let path_check = Path::new(path.as_ref().as_os_str());
+
+        if !path_check.exists() {
+            return Err(Error::FileNotFound(
+                path_check.to_str().map(|v| v.to_string()),
+            ));
         }
 
         let file_name = path_to_cstring(path);
@@ -82,8 +86,7 @@ impl TTFFile {
 
     fn load(ttf: MaybeUninit<*mut sys::ttf_file>, error: i32) -> Result<TTFFile, Error> {
         if error != ttf2mesh_sys::TTF_DONE as i32 {
-            // fprintf(stderr, "Unable to load font: %s\n", ttf_error_str[error]);
-            return Err(Error::FontLoadError);
+            return Err(Error::FontLoadError(error.into()));
         }
 
         Ok(Self {
@@ -103,8 +106,7 @@ impl TTFFile {
             unsafe { sys::ttf_export_to_obj(self.ttf, file_name.as_ptr(), quality.as_u8()) };
 
         if error != ttf2mesh_sys::TTF_DONE as i32 {
-            // fprintf(stderr, "Unable to export font: %s\n", ttf_error_str[error]);
-            return Err(Error::ObjExportError);
+            return Err(Error::ObjExportError(error.into()));
         }
 
         Ok(())

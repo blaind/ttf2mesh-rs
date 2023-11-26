@@ -28,7 +28,7 @@ impl Quality {
                     "low" => Quality::Low,
                     "medium" => Quality::Medium,
                     "high" => Quality::High,
-                    _ => return Err(Error::QualityParse),
+                    _ => return Err(Error::QualityParse(val.into())),
                 });
             }
         };

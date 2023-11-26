@@ -17,10 +17,10 @@ fn main() {
 
         match ttf2mesh::Quality::from_str(&quality_str) {
             Ok(q) => q,
-            Err(e) => {
+            Err(error) => {
                 println!(
-                    "Can not parse quality ({}): {:?}. Try 'low', 'medium' or 'high'",
-                    quality_str, e
+                    "Can not parse quality ({}): {}. Try 'low', 'medium' or 'high'",
+                    quality_str, error
                 );
                 std::process::exit(255);
             }
@@ -33,8 +33,8 @@ fn main() {
 
     let mut font = match ttf2mesh::TTFFile::from_file(font) {
         Ok(font) => font,
-        Err(e) => {
-            println!(" - font load failed: {:?}", e);
+        Err(error) => {
+            println!(" - font load failed: {}", error);
             std::process::exit(255);
         }
     };
@@ -43,8 +43,8 @@ fn main() {
         println!("Mesh data char {:?}", char);
         let mut glyph = match font.glyph_from_char(char) {
             Ok(g) => g,
-            Err(_) => {
-                println!("- can not find glyph in the font file");
+            Err(error) => {
+                println!("- can not find glyph in the font file: {}", error);
                 continue;
             }
         };
@@ -74,8 +74,8 @@ fn main() {
                 );
                 println!("");
             }
-            Err(e) => {
-                println!(" - could not generate 2d mesh: {:?}", e);
+            Err(error) => {
+                println!(" - could not generate 2d mesh: {}", error);
             }
         }
 
