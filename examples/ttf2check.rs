@@ -15,8 +15,8 @@ fn main() {
 
     let mut font = match ttf2mesh::TTFFile::from_file(font) {
         Ok(font) => font,
-        Err(e) => {
-            println!(" - font load failed: {:?}", e);
+        Err(error) => {
+            println!(" - font load failed: {}", error);
             std::process::exit(255);
         }
     };

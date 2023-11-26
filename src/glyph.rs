@@ -31,7 +31,7 @@ impl<'a> Glyph<'a> {
     pub fn to_2d_mesh<'b>(&mut self, quality: Quality) -> Result<Mesh<'b, Mesh2d>, Error> {
         let mut mesh = MaybeUninit::uninit();
 
-        let features = sys::TTF_FEATURES_DFLT;
+        let features = sys::TTF_FEATURES_DFLT | sys::TTF_FEATURE_IGN_ERR;
 
         let error = unsafe {
             sys::ttf_glyph2mesh(
@@ -43,7 +43,7 @@ impl<'a> Glyph<'a> {
         };
 
         if error != ttf2mesh_sys::TTF_DONE as i32 {
-            return Err(Error::Glyph2MeshError);
+            return Err(Error::Glyph2MeshError(error.into()));
         }
 
         let mesh = unsafe { mesh.assume_init() };
@@ -71,7 +71,7 @@ impl<'a> Glyph<'a> {
         };
 
         if error != ttf2mesh_sys::TTF_DONE as i32 {
-            return Err(Error::Glyph2MeshError);
+            return Err(Error::Glyph2MeshError(error.into()));
         }
 
         let mesh = unsafe { mesh.assume_init() };

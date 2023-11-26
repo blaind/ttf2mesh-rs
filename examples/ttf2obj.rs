@@ -18,10 +18,10 @@ fn main() {
 
         match ttf2mesh::Quality::from_str(&quality_str) {
             Ok(q) => q,
-            Err(e) => {
+            Err(error) => {
                 println!(
-                    "Can not parse quality ({}): {:?}. Try 'low', 'medium' or 'high'",
-                    quality_str, e
+                    "Can not parse quality ({}): {}. Try 'low', 'medium' or 'high'",
+                    quality_str, error
                 );
                 std::process::exit(255);
             }
@@ -34,8 +34,8 @@ fn main() {
 
     let mut font = match ttf2mesh::TTFFile::from_file(font) {
         Ok(font) => font,
-        Err(e) => {
-            println!(" - font load failed: {:?}", e);
+        Err(error) => {
+            println!(" - font load failed: {}", error);
             std::process::exit(255);
         }
     };
@@ -44,8 +44,8 @@ fn main() {
 
     match font.export_to_obj(obj_file, quality) {
         Ok(_) => println!("Done"),
-        Err(e) => {
-            println!(" - export failed: {:?}", e);
+        Err(error) => {
+            println!(" - export failed: {}", error);
             std::process::exit(255);
         }
     }
